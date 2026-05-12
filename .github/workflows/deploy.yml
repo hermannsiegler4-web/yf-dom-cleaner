@@ -57,6 +57,8 @@ jobs:
           cp favicon* _site/
           cp android* _site/
 
+          ls -la _site  # List contents for debugging
+
       # Upload the prepared _site directory as a Pages artifact.
       # This artifact is later consumed by the deploy job.
       - name: Upload Pages artifact
