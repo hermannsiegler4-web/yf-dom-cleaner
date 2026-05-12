@@ -3,7 +3,7 @@
 // @namespace    http://tampermonkey.net/
 // @version      1.0.0
 // @description  Removes unwanted elements (e.g. ads, banners) from Yahoo Finance by ID, including dynamically injected ones
-// @author       You
+// @author       Hermann Siegler
 // @match        https://finance.yahoo.com/*
 // @grant        none
 // ==/UserScript==
