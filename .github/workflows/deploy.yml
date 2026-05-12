@@ -1,0 +1,81 @@
+# .github/workflows/deploy-pages.yml
+# GitHub Actions workflow to build and deploy the Yahoo Finance DOM Cleaner
+# userscript site to GitHub Pages.
+
+name: Deploy to GitHub Pages
+
+on:
+  # Trigger on pushes to the main branch
+  push:
+    branches:
+      - main
+  # Allow manual triggering from the Actions tab
+  workflow_dispatch:
+
+# Set permissions required for GitHub Pages deployment
+permissions:
+  contents: read       # Read repository contents
+  pages: write         # Write to GitHub Pages
+  id-token: write      # Allow OIDC token issuance for deployment authentication
+
+# Prevent parallel deployments to avoid conflicts.
+# In-progress runs will NOT be cancelled; new runs will queue instead.
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  # ─── Build Job ────────────────────────────────────────────────────────────────
+  # Prepares the _site directory with all files needed for the Pages deployment.
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Check out the repository so we have access to all files
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # Configure GitHub Pages (sets base URL, etc.) and prepare the environment
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@v5
+
+      # Create the _site output directory and copy the required files into it.
+      # GitHub Pages artifacts must be served from a single directory (_site).
+      - name: Build site artifacts
+        run: |
+          # Create the output directory
+          mkdir -p _site
+
+          # Copy the userscript to _site so visitors can install it directly
+          cp yahoo-finance-dom-cleaner.user.js _site/yahoo-finance-dom-cleaner.user.js
+
+          # Copy the landing page that links to / describes the userscript
+          cp index.html _site/index.html
+
+      # Upload the prepared _site directory as a Pages artifact.
+      # This artifact is later consumed by the deploy job.
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          # Path to the directory containing the site files
+          path: _site
+
+  # ─── Deploy Job ───────────────────────────────────────────────────────────────
+  # Deploys the uploaded artifact to GitHub Pages.
+  # Runs only after the build job completes successfully.
+  deploy:
+    runs-on: ubuntu-latest
+
+    # Declare the target deployment environment and capture the resulting URL
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    # This job depends on the build job finishing successfully
+    needs: build
+
+    steps:
+      # Deploy the artifact uploaded in the build job to GitHub Pages
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
