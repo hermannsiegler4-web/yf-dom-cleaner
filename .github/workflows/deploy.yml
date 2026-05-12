@@ -52,6 +52,11 @@ jobs:
           # Copy the landing page that links to / describes the userscript
           cp index.html _site/index.html
 
+          cp site.webmanifest _site/site.webmanifest
+          cp apple* _site/
+          cp favicon* _site/
+          cp android* _site/
+
       # Upload the prepared _site directory as a Pages artifact.
       # This artifact is later consumed by the deploy job.
       - name: Upload Pages artifact
