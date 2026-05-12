@@ -242,6 +242,8 @@ Contributions are welcome and appreciated! Here's how to get involved:
 > Please open an  before starting significant work so we can discuss the approach first.
 
 ---
+Credits to https://favicon.io/favicon-converter/ for the favicon generation.
+---
 
 ## 📄 License
 
